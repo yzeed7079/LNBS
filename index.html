@@ -1,0 +1,1070 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" id="htmlRoot">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="الموقع الرسمي لأضخم ماب رعب في روبلوكس - استوديو التطوير">
+    <meta name="keywords" content="Roblox, Horror, Game, Studio, Roblox Studio, Roblox Map, Luau">
+    <meta name="author" content="5L3">
+    <title data-ar="أضخم ماب رعب | روبلوكس استوديو" data-en="Ultimate Roblox Horror Experience">أضخم ماب رعب | روبلوكس استوديو</title>
+
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Creepster&family=Tajawal:wght@300;400;500;700;900&family=Poppins:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+
+    <style>
+        /* ==========================================================================
+           1. CORE VARIABLES & BASE STYLES
+           ========================================================================== */
+        :root {
+            --bg-black: #020203;
+            --bg-card: rgba(12, 4, 4, 0.88);
+            --bg-card-hover: rgba(22, 6, 6, 0.95);
+            --border-red: #4a0000;
+            --border-red-bright: #8b0000;
+            --accent-red: #ff0000;
+            --accent-red-glow: rgba(255, 0, 0, 0.5);
+            --accent-purple: #5865F2;
+            --accent-purple-glow: rgba(88, 101, 242, 0.5);
+            --text-main: #f0e6e6;
+            --text-muted: #a38d8d;
+            --text-dark: #665252;
+            --font-ar: 'Tajawal', sans-serif;
+            --font-en: 'Poppins', sans-serif;
+            --font-horror: 'Creepster', cursive;
+            --transition-fast: 0.2s ease;
+            --transition-normal: 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-slow: 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            outline: none;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        html[dir="rtl"] body {
+            font-family: var(--font-ar);
+        }
+
+        html[dir="ltr"] body {
+            font-family: var(--font-en);
+        }
+
+        body {
+            background-color: var(--bg-black);
+            background-image: 
+                radial-gradient(circle at 50% 20%, rgba(139, 0, 0, 0.25) 0%, transparent 60%),
+                radial-gradient(circle at 80% 80%, rgba(80, 0, 0, 0.15) 0%, transparent 50%),
+                linear-gradient(to bottom, rgba(2, 2, 3, 0.85), rgba(15, 2, 2, 0.75), rgba(2, 2, 3, 0.98)),
+                url('https://images.unsplash.com/photo-1509248961158-e54f6934749c?q=80&w=1920&auto=format&fit=crop');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            color: var(--text-main);
+            overflow-x: hidden;
+            line-height: 1.7;
+            position: relative;
+            min-height: 100vh;
+        }
+
+        /* ==========================================================================
+           2. CANVAS BACKGROUND & HORROR OVERLAYS
+           ========================================================================== */
+        #particlesCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .blood-drips-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 38px;
+            background: repeating-linear-gradient(
+                90deg,
+                var(--border-red-bright),
+                var(--border-red-bright) 18px,
+                transparent 18px,
+                transparent 36px
+            );
+            border-bottom: 3px solid var(--accent-red);
+            box-shadow: 0 5px 30px var(--accent-red-glow);
+            z-index: 2500;
+            pointer-events: none;
+            opacity: 0.9;
+        }
+
+        .vignette-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: radial-gradient(circle, transparent 50%, rgba(0,0,0,0.85) 90%);
+            pointer-events: none;
+            z-index: 2;
+        }
+
+        .scanlines {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%);
+            background-size: 100% 4px;
+            pointer-events: none;
+            z-index: 3;
+            opacity: 0.6;
+        }
+
+        /* ==========================================================================
+           3. NAVIGATION HEADER
+           ========================================================================== */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 22px 7%;
+            background: rgba(6, 2, 2, 0.92);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            border-bottom: 2px solid var(--border-red);
+            position: sticky;
+            top: 0;
+            z-index: 2000;
+            box-shadow: 0 4px 25px rgba(255, 0, 0, 0.25);
+        }
+
+        .brand-logo {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            text-decoration: none;
+            color: #fff;
+        }
+
+        .brand-logo i {
+            font-size: 2rem;
+            color: var(--accent-red);
+            filter: drop-shadow(0 0 10px var(--accent-red));
+            animation: pulseFlicker 3s infinite;
+        }
+
+        .brand-logo-text {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .brand-title {
+            font-size: 1.6rem;
+            font-weight: 900;
+            letter-spacing: 1px;
+            text-shadow: 0 0 12px var(--accent-red);
+        }
+
+        .brand-subtitle {
+            font-size: 0.75rem;
+            color: var(--accent-red);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .action-btn {
+            background: rgba(30, 4, 4, 0.7);
+            border: 1px solid var(--border-red-bright);
+            color: var(--text-main);
+            padding: 9px 18px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: var(--transition-normal);
+            font-size: 0.95rem;
+        }
+
+        .action-btn:hover {
+            background: var(--accent-red);
+            color: #fff;
+            box-shadow: 0 0 20px var(--accent-red-glow);
+            border-color: var(--accent-red);
+        }
+
+        .sound-toggle-btn.active {
+            border-color: var(--accent-red);
+            color: var(--accent-red);
+            animation: soundGlow 1.5s infinite alternate;
+        }
+
+        /* ==========================================================================
+           4. HERO SECTION & STUDIO STATEMENT
+           ========================================================================== */
+        .hero-section {
+            position: relative;
+            z-index: 10;
+            padding: 90px 7% 50px;
+            text-align: center;
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        .hero-badge-wrapper {
+            margin-bottom: 25px;
+        }
+
+        .hero-badge {
+            background: rgba(255, 0, 0, 0.15);
+            color: #ff5555;
+            border: 1px solid var(--accent-red);
+            padding: 8px 24px;
+            border-radius: 30px;
+            font-size: 0.9rem;
+            font-weight: 800;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 0 20px rgba(255, 0, 0, 0.35);
+            animation: pulseBadge 2.5s infinite ease-in-out;
+        }
+
+        .hero-main-title {
+            font-size: 3.5rem;
+            font-weight: 900;
+            margin-bottom: 25px;
+            color: #ffffff;
+            line-height: 1.2;
+            text-shadow: 0 0 25px rgba(255, 0, 0, 0.7);
+            letter-spacing: -1px;
+        }
+
+        .studio-statement-card {
+            background: var(--bg-card);
+            border: 2px solid var(--border-red);
+            padding: 35px 40px;
+            border-radius: 18px;
+            margin: 30px auto 40px;
+            backdrop-filter: blur(10px);
+            position: relative;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8), 0 0 20px rgba(255, 0, 0, 0.2);
+            transition: var(--transition-normal);
+        }
+
+        .studio-statement-card::before {
+            content: '“';
+            position: absolute;
+            top: -20px;
+            right: 30px;
+            font-size: 5rem;
+            color: var(--accent-red);
+            opacity: 0.3;
+            font-family: Georgia, serif;
+        }
+
+        html[dir="ltr"] .studio-statement-card::before {
+            right: auto;
+            left: 30px;
+        }
+
+        .studio-statement-text {
+            font-size: 1.35rem;
+            font-weight: 600;
+            color: #fce8e8;
+            line-height: 1.9;
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.9);
+        }
+
+        .hero-cta-group {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-top: 35px;
+        }
+
+        .btn-main {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            padding: 18px 42px;
+            border-radius: 12px;
+            text-decoration: none;
+            font-weight: 900;
+            font-size: 1.25rem;
+            transition: var(--transition-normal);
+            cursor: pointer;
+            border: none;
+        }
+
+        .btn-roblox {
+            background: linear-gradient(180deg, #ff1a1a 0%, #8b0000 100%);
+            color: #fff;
+            box-shadow: 0 0 35px var(--accent-red-glow);
+            border: 1px solid #ff4d4d;
+        }
+
+        .btn-roblox:hover {
+            transform: translateY(-4px) scale(1.03);
+            box-shadow: 0 0 50px rgba(255, 0, 0, 0.9);
+            background: linear-gradient(180deg, #ff3333 0%, #a00000 100%);
+        }
+
+        .btn-discord {
+            background: linear-gradient(180deg, #5865F2 0%, #3b46a9 100%);
+            color: #fff;
+            box-shadow: 0 0 35px var(--accent-purple-glow);
+            border: 1px solid #7983f5;
+        }
+
+        .btn-discord:hover {
+            transform: translateY(-4px) scale(1.03);
+            box-shadow: 0 0 50px rgba(88, 101, 242, 0.9);
+            background: linear-gradient(180deg, #6975f3 0%, #4752c4 100%);
+        }
+
+        /* ==========================================================================
+           5. COUNTDOWN & STATS BAR
+           ========================================================================== */
+        .status-container {
+            position: relative;
+            z-index: 10;
+            padding: 0 7%;
+            margin-bottom: 60px;
+        }
+
+        .status-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px;
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        .status-card {
+            background: rgba(10, 3, 3, 0.85);
+            border: 1px solid var(--border-red);
+            border-radius: 14px;
+            padding: 22px;
+            text-align: center;
+            backdrop-filter: blur(8px);
+            transition: var(--transition-normal);
+        }
+
+        .status-card:hover {
+            border-color: var(--accent-red);
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(255, 0, 0, 0.25);
+        }
+
+        .status-value {
+            font-size: 2.2rem;
+            font-weight: 900;
+            color: #fff;
+            text-shadow: 0 0 15px var(--accent-red);
+            margin-bottom: 5px;
+        }
+
+        .status-label {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+
+        /* ==========================================================================
+           6. WARNING BANNER
+           ========================================================================== */
+        .warning-banner {
+            position: relative;
+            z-index: 10;
+            margin: 0 7% 70px;
+            padding: 25px;
+            background: rgba(45, 2, 2, 0.9);
+            border: 2px solid var(--accent-red);
+            border-radius: 14px;
+            text-align: center;
+            color: #ffb3b3;
+            box-shadow: 0 0 30px rgba(255, 0, 0, 0.35);
+        }
+
+        .warning-banner i {
+            font-size: 2.5rem;
+            margin-bottom: 12px;
+            color: var(--accent-red);
+            animation: pulseFlicker 2s infinite;
+        }
+
+        .warning-banner h3 {
+            font-size: 1.4rem;
+            font-weight: 800;
+            margin-bottom: 8px;
+            color: #fff;
+        }
+
+        .warning-banner p {
+            font-size: 1rem;
+            color: #ffd6d6;
+        }
+
+        /* ==========================================================================
+           7. SECTION TITLES & TABS
+           ========================================================================== */
+        .section-header {
+            position: relative;
+            z-index: 10;
+            text-align: center;
+            margin-bottom: 45px;
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            font-weight: 900;
+            color: #fff;
+            text-shadow: 0 0 20px rgba(255, 0, 0, 0.6);
+            display: inline-block;
+            position: relative;
+        }
+
+        .section-title::after {
+            content: '';
+            display: block;
+            width: 60%;
+            height: 4px;
+            background: var(--accent-red);
+            margin: 10px auto 0;
+            border-radius: 2px;
+            box-shadow: 0 0 10px var(--accent-red);
+        }
+
+        /* ==========================================================================
+           8. MAP FEATURES GRID
+           ========================================================================== */
+        .features-section {
+            position: relative;
+            z-index: 10;
+            padding: 0 7% 80px;
+        }
+
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .feature-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-red);
+            padding: 35px 30px;
+            border-radius: 16px;
+            transition: var(--transition-normal);
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(8px);
+        }
+
+        .feature-card::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, transparent, var(--accent-red), transparent);
+            transition: var(--transition-normal);
+        }
+
+        .feature-card:hover {
+            background: var(--bg-card-hover);
+            border-color: var(--accent-red);
+            transform: translateY(-8px);
+            box-shadow: 0 12px 35px rgba(255, 0, 0, 0.35);
+        }
+
+        .feature-icon-box {
+            width: 70px;
+            height: 70px;
+            background: rgba(30, 0, 0, 0.8);
+            border: 2px solid var(--border-red-bright);
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 22px;
+            font-size: 2rem;
+            color: var(--accent-red);
+            box-shadow: 0 0 15px rgba(255, 0, 0, 0.2);
+            transition: var(--transition-normal);
+        }
+
+        .feature-card:hover .feature-icon-box {
+            border-color: var(--accent-red);
+            box-shadow: 0 0 25px var(--accent-red-glow);
+            transform: scale(1.08);
+        }
+
+        .feature-title {
+            font-size: 1.4rem;
+            font-weight: 800;
+            color: #fff;
+            margin-bottom: 12px;
+        }
+
+        .feature-desc {
+            font-size: 1rem;
+            color: var(--text-muted);
+            line-height: 1.7;
+        }
+
+        /* ==========================================================================
+           9. DEVELOPMENT TEAM SECTION (5 DEVELOPERS)
+           ========================================================================== */
+        .team-section {
+            position: relative;
+            z-index: 10;
+            padding: 20px 7% 90px;
+        }
+
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 25px;
+            max-width: 1300px;
+            margin: 0 auto;
+        }
+
+        .team-card {
+            background: rgba(14, 3, 3, 0.9);
+            border: 1px solid var(--border-red);
+            border-radius: 18px;
+            padding: 32px 22px;
+            text-align: center;
+            backdrop-filter: blur(10px);
+            transition: var(--transition-normal);
+            position: relative;
+        }
+
+        .team-card:hover {
+            border-color: var(--accent-red);
+            transform: translateY(-8px);
+            box-shadow: 0 12px 35px var(--accent-red-glow);
+            background: rgba(22, 5, 5, 0.95);
+        }
+
+        .team-avatar {
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            background: #1c0303;
+            border: 3px solid var(--border-red-bright);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 18px;
+            font-size: 2.3rem;
+            color: var(--accent-red);
+            box-shadow: 0 0 20px rgba(255, 0, 0, 0.3);
+            transition: var(--transition-normal);
+        }
+
+        .team-card:hover .team-avatar {
+            border-color: var(--accent-red);
+            box-shadow: 0 0 30px var(--accent-red-glow);
+            transform: scale(1.05);
+        }
+
+        .team-name {
+            font-size: 1.5rem;
+            font-weight: 900;
+            color: #fff;
+            margin-bottom: 6px;
+        }
+
+        .team-role {
+            font-size: 0.88rem;
+            color: #ff6666;
+            font-weight: 700;
+            margin-bottom: 16px;
+            background: rgba(255, 0, 0, 0.15);
+            padding: 6px 14px;
+            border-radius: 20px;
+            display: inline-block;
+            border: 1px solid rgba(255, 0, 0, 0.35);
+        }
+
+        .team-bio {
+            font-size: 0.92rem;
+            color: var(--text-muted);
+            line-height: 1.6;
+        }
+
+        /* ==========================================================================
+           10. FOOTER & COPYRIGHT
+           ========================================================================== */
+        footer {
+            position: relative;
+            z-index: 10;
+            background: rgba(4, 1, 1, 0.98);
+            border-top: 2px solid var(--border-red);
+            padding: 45px 7% 35px;
+            text-align: center;
+            margin-top: 40px;
+        }
+
+        .footer-logo {
+            font-size: 1.8rem;
+            font-weight: 900;
+            color: #fff;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .footer-logo i {
+            color: var(--accent-red);
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 25px;
+            list-style: none;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+        }
+
+        .footer-links a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-weight: 600;
+            transition: var(--transition-fast);
+        }
+
+        .footer-links a:hover {
+            color: var(--accent-red);
+        }
+
+        .footer-credits {
+            font-size: 0.95rem;
+            color: var(--text-dark);
+            border-top: 1px solid rgba(255, 0, 0, 0.15);
+            padding-top: 25px;
+        }
+
+        /* ==========================================================================
+           11. ANIMATIONS & KEYFRAMES
+           ========================================================================== */
+        @keyframes pulseFlicker {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.7; transform: scale(0.96); }
+            70% { opacity: 0.9; }
+        }
+
+        @keyframes pulseBadge {
+            0%, 100% { box-shadow: 0 0 15px rgba(255, 0, 0, 0.3); }
+            50% { box-shadow: 0 0 30px rgba(255, 0, 0, 0.8); }
+        }
+
+        @keyframes soundGlow {
+            0% { box-shadow: 0 0 5px var(--accent-red-glow); }
+            100% { box-shadow: 0 0 20px var(--accent-red-glow); }
+        }
+
+        /* ==========================================================================
+           12. RESPONSIVE MEDIA QUERIES
+           ========================================================================== */
+        @media (max-width: 992px) {
+            .hero-main-title { font-size: 2.8rem; }
+            .studio-statement-text { font-size: 1.2rem; }
+        }
+
+        @media (max-width: 768px) {
+            header { padding: 18px 5%; }
+            .brand-title { font-size: 1.3rem; }
+            .hero-main-title { font-size: 2.2rem; }
+            .studio-statement-card { padding: 25px 20px; }
+            .studio-statement-text { font-size: 1.1rem; }
+            .btn-main { width: 100%; }
+            .hero-cta-group { flex-direction: column; }
+            .status-grid { grid-template-columns: 1fr 1fr; }
+        }
+
+        @media (max-width: 480px) {
+            .status-grid { grid-template-columns: 1fr; }
+            .action-btn span { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Canvas for Atmospheric Particles & Fog -->
+    <canvas id="particlesCanvas"></canvas>
+
+    <!-- Top Drips & Vignette Overlay -->
+    <div class="blood-drips-bar"></div>
+    <div class="vignette-overlay"></div>
+    <div class="scanlines"></div>
+
+    <!-- Background Audio Element -->
+    <audio id="horrorAmbientAudio" loop preload="none">
+        <source src="https://assets.mixkit.co/active_storage/sfx/2874/2874-preview.mp3" type="audio/mpeg">
+    </audio>
+
+    <!-- Navigation Header -->
+    <header>
+        <a href="#" class="brand-logo">
+            <i class="fa-solid fa-ghost"></i>
+            <div class="brand-logo-text">
+                <span class="brand-title" data-ar="استوديو الرعب" data-en="Horror Studio">استوديو الرعب</span>
+                <span class="brand-subtitle" data-ar="روبلوكس استوديو" data-en="Roblox Studio">روبلوكس استوديو</span>
+            </div>
+        </a>
+
+        <div class="nav-actions">
+            <!-- Audio Toggle -->
+            <button class="action-btn sound-toggle-btn" id="soundToggleBtn" onclick="toggleAudio()" title="الصوت المحيطي">
+                <i class="fa-solid fa-volume-xmark" id="soundIcon"></i>
+                <span data-ar="الصوت" data-en="Audio">الصوت</span>
+            </button>
+
+            <!-- Language Toggle -->
+            <button class="action-btn" onclick="toggleLanguage()" id="langToggleBtn">
+                <i class="fa-solid fa-globe"></i>
+                <span id="langText">English</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Hero Section -->
+    <section class="hero-section">
+        <div class="hero-badge-wrapper">
+            <div class="hero-badge">
+                <i class="fa-solid fa-skull"></i>
+                <span data-ar="⚠️ مشروع الرعب الجديد والاكبر" data-en="⚠️ The Largest New Horror Project">⚠️ مشروع الرعب الجديد والاكبر</span>
+            </div>
+        </div>
+
+        <h1 class="hero-main-title" data-ar="تجربة رعب سينمائية فريدة من نوعها" data-en="A Unique Cinematic Horror Experience">تجربة رعب سينمائية فريدة من نوعها</h1>
+
+        <!-- البيان الرسمي للاستوديو -->
+        <div class="studio-statement-card">
+            <p class="studio-statement-text" 
+               data-ar="لقد عمل على هذا الاستوديو مبرمجين كبار ولقد حلموا بأن يكونوا من ضمن الاستوديوهات الكبيرة ولقد حققوا حلمهم وأنهم الآن يعملون على ماب كبير وضخم وقد يكون الماب الفريد من نوعه والأول من حيث الرعب ولقد تعبوا من أجلكم ولكي تستمتعون بالماب ونتمنى لكم يوماً ممتعاً."
+               data-en="Great developers worked on this studio, dreaming of joining the ranks of major studios. They fulfilled their dream and are now crafting a massive horror map that may be the most unique and terrifying of its kind. They worked tirelessly for you to enjoy the experience, and we wish you a thrilling time.">
+               لقد عمل على هذا الاستوديو مبرمجين كبار ولقد حلموا بأن يكونوا من ضمن الاستوديوهات الكبيرة ولقد حققوا حلمهم وأنهم الآن يعملون على ماب كبير وضخم وقد يكون الماب الفريد من نوعه والأول من حيث الرعب ولقد تعبوا من أجلكم ولكي تستمتعون بالماب ونتمنى لكم يوماً ممتعاً.
+            </p>
+        </div>
+
+        <!-- أزرار الانضمام واللعب -->
+        <div class="hero-cta-group">
+            <a href="#" class="btn-main btn-roblox">
+                <i class="fa-solid fa-play"></i>
+                <span data-ar="دخول الماب قريباً" data-en="Enter Map Soon">دخول الماب قريباً</span>
+            </a>
+
+            <a href="https://discord.gg/lnb" target="_blank" class="btn-main btn-discord">
+                <i class="fa-brands fa-discord"></i>
+                <span data-ar="سيرفر الديسكورد" data-en="Discord Server">سيرفر الديسكورد</span>
+            </a>
+        </div>
+    </section>
+
+    <!-- Stats Section -->
+    <div class="status-container">
+        <div class="status-grid">
+            <div class="status-card">
+                <div class="status-value">5</div>
+                <div class="status-label" data-ar="مطورين المحترفين" data-en="Pro Developers">مطورين المحترفين</div>
+            </div>
+            <div class="status-card">
+                <div class="status-value">100%</div>
+                <div class="status-label" data-ar="سكربتات Luau مخصصة" data-en="Custom Luau Scripts">سكربتات Luau مخصصة</div>
+            </div>
+            <div class="status-card">
+                <div class="status-value">4K</div>
+                <div class="status-label" data-ar="جودة الأجواء والإضاءة" data-en="Visual & Audio Quality">جودة الأجواء والإضاءة</div>
+            </div>
+            <div class="status-card">
+                <div class="status-value">∞</div>
+                <div class="status-label" data-ar="إثارة ورعب متواصل" data-en="Non-stop Thrill">إثارة ورعب متواصل</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Warning Banner -->
+    <div class="warning-banner">
+        <i class="fa-solid fa-triangle-exclamation"></i>
+        <h3 data-ar="تحذير هام لجميع اللاعبين" data-en="Important Warning For All Players">تحذير هام لجميع اللاعبين</h3>
+        <p data-ar="الماب يحتوي على مؤثرات ضوئية سريعة، أصوات مرعبة عالية، ودماء. ينصح بتركيب السماعات للحصول على التجربة الكاملة!"
+           data-en="The map contains flashing lights, loud jumpscares, and blood. Headphones are recommended for maximum immersion!">
+           الماب يحتوي على مؤثرات ضوئية سريعة، أصوات مرعبة عالية، ودماء. ينصح بتركيب السماعات للحصول على التجربة الكاملة!
+        </p>
+    </div>
+
+    <!-- Map Features Grid -->
+    <section class="features-section">
+        <div class="section-header">
+            <h2 class="section-title" data-ar="مميزات وأنظمة الماب" data-en="Map Systems & Features">مميزات وأنظمة الماب</h2>
+        </div>
+
+        <div class="cards-grid">
+            <!-- Feature 1 -->
+            <div class="feature-card">
+                <div class="feature-icon-box">
+                    <i class="fa-solid fa-puzzle-piece"></i>
+                </div>
+                <h3 class="feature-title" data-ar="ألغاز متقدمة ومتاهات" data-en="Advanced Puzzles & Mazes">ألغاز متقدمة ومتاهات</h3>
+                <p class="feature-desc" data-ar="نظام أرقام سرية، تتبع المفاتيح، والهروب من الغرف المغلقة تحت ضغط الوقت والخوف." data-en="Keypads, door lockpicking, and escaping locked chambers under intense time pressure.">نظام أرقام سرية، تتبع المفاتيح، والهروب من الغرف المغلقة تحت ضغط الوقت والخوف.</p>
+            </div>
+
+            <!-- Feature 2 -->
+            <div class="feature-card">
+                <div class="feature-icon-box">
+                    <i class="fa-solid fa-biohazard"></i>
+                </div>
+                <h3 class="feature-title" data-ar="ذكاء اصطناعي للوحوش (AI)" data-en="Smart Monster AI">ذكاء اصطناعي للوحوش (AI)</h3>
+                <p class="feature-desc" data-ar="الوحوش تستشعر حركتك وأصوات خطواتك وتطاردك بتكتيكات مرعبة وغير متوقعة." data-en="Entities track footsteps and movement, hunting players with unpredictable AI tactics.">الوحوش تستشعر حركتك وأصوات خطواتك وتطاردك بتكتيكات مرعبة وغير متوقعة.</p>
+            </div>
+
+            <!-- Feature 3 -->
+            <div class="feature-card">
+                <div class="feature-icon-box">
+                    <i class="fa-solid fa-flashlight"></i>
+                </div>
+                <h3 class="feature-title" data-ar="إضاءة وكشافات واقعية" data-en="Realistic Lighting & Flashlight">إضاءة وكشافات واقعية</h3>
+                <p class="feature-desc" data-ar="نظام إضاءة ديناميكي بالكامل مع بطارية كشاف تنفد وتتطلب البحث عن مؤن للبقاء حياً." data-en="Dynamic lighting engine with battery management mechanics for survival.">نظام إضاءة ديناميكي بالكامل مع بطارية كشاف تنفد وتتطلب البحث عن مؤن للبقاء حياً.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Team Section (5 Developers) -->
+    <section class="team-section">
+        <div class="section-header">
+            <h2 class="section-title" data-ar="طاقم مطورين الاستوديو" data-en="Studio Development Team">طاقم مطورين الاستوديو</h2>
+        </div>
+
+        <div class="team-grid">
+            <!-- 1. زينو -->
+            <div class="team-card">
+                <div class="team-avatar"><i class="fa-solid fa-crown"></i></div>
+                <div class="team-name">زينو</div>
+                <div class="team-role" data-ar="المطور القيادي / Lead Developer" data-en="Lead Developer">المطور القيادي / Lead Developer</div>
+                <p class="team-bio" data-ar="قائد فريق التطوير والمشرف على الأفكار والأنظمة الأساسية للماب." data-en="Team leader and supervisor of core concepts and gameplay frameworks.">قائد فريق التطوير والمشرف على الأفكار والأنظمة الأساسية للماب.</p>
+            </div>
+
+            <!-- 2. ابو قحط -->
+            <div class="team-card">
+                <div class="team-avatar"><i class="fa-solid fa-cubes"></i></div>
+                <div class="team-name">ابو قحط</div>
+                <div class="team-role" data-ar="مصمم البيئة والمباني" data-en="Level & Environment Designer">مصمم البيئة والمباني</div>
+                <p class="team-bio" data-ar="مهندس تفاصيل البناء، الممرات المظلمة، والديكور المرعب في الاستوديو." data-en="Architect of dark corridors, detailed builds, and horror atmospheric environments.">مهندس تفاصيل البناء، الممرات المظلمة، والديكور المرعب في الاستوديو.</p>
+            </div>
+
+            <!-- 3. تركي -->
+            <div class="team-card">
+                <div class="team-avatar"><i class="fa-solid fa-terminal"></i></div>
+                <div class="team-name">تركي</div>
+                <div class="team-role" data-ar="مطور السكربتات والذكاء الاصطناعي" data-en="Luau Scripter & AI Dev">مطور السكربتات والذكاء الاصطناعي</div>
+                <p class="team-bio" data-ar="متخصص برمجيات Luau، ذكاء الوحوش AI، وأنظمة التفاعل المتقدمة." data-en="Specialized in Luau scripting, entity AI behaviors, and interactive mechanics.">متخصص برمجيات Luau، ذكاء الوحوش AI، وأنظمة التفاعل المتقدمة.</p>
+            </div>
+
+            <!-- 4. Abo Alzaid -->
+            <div class="team-card">
+                <div class="team-avatar"><i class="fa-solid fa-wand-magic-sparkles"></i></div>
+                <div class="team-name">Abo Alzaid</div>
+                <div class="team-role" data-ar="مهندس الإضاءة والمؤثرات" data-en="Audio & Visual FX Engineer">مهندس الإضاءة والمؤثرات</div>
+                <p class="team-bio" data-ar="مسؤول عن المؤثرات الصوتية المرعبة، هندسة الإضاءة، والضباب السينمائي." data-en="Master of 3D horror audio engineering, lighting FX, and cinematic fog.">مسؤول عن المؤثرات الصوتية المرعبة، هندسة الإضاءة، والضباب السينمائي.</p>
+            </div>
+
+            <!-- 5. 5L3 -->
+            <div class="team-card">
+                <div class="team-avatar"><i class="fa-solid fa-code"></i></div>
+                <div class="team-name">5L3</div>
+                <div class="team-role" data-ar="مبرمج الديسكورد والموقع" data-en="Discord & Web Developer">مبرمج الديسكورد والموقع</div>
+                <p class="team-bio" data-ar="مطور البوتات، السيرفرات، والموقع الإلكتروني التعريفي للاستوديو." data-en="Developer of custom Discord infrastructure, bots, and official web portals.">مطور البوتات، السيرفرات، والموقع الإلكتروني التعريفي للاستوديو.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-logo">
+            <i class="fa-solid fa-skull"></i>
+            <span data-ar="استوديو ماب الرعب" data-en="Horror Map Studio">استوديو ماب الرعب</span>
+        </div>
+
+        <ul class="footer-links">
+            <li><a href="https://discord.gg/lnb" target="_blank" data-ar="انضم لسيرفر الديسكورد" data-en="Join Discord">انضم لسيرفر الديسكورد</a></li>
+            <li><a href="#" data-ar="الدعم الفني" data-en="Support">الدعم الفني</a></li>
+        </ul>
+
+        <div class="footer-credits">
+            <p>© 2026 <span data-ar="جميع الحقوق محفوظة للاستوديو." data-en="All Studio Rights Reserved.">جميع الحقوق محفوظة للاستوديو.</span> | Developed by <strong>5L3</strong></p>
+        </div>
+    </footer>
+
+    <!-- ==========================================================================
+       13. JAVASCRIPT ENGINE (LOGIC, TRANSLATIONS, CANVAS)
+       ========================================================================== -->
+    <script>
+        /* --- A. Language Management System --- */
+        let currentLang = localStorage.getItem('studio_horror_lang') || 'ar';
+
+        function applyLanguage(lang) {
+            const htmlRoot = document.getElementById('htmlRoot');
+            const langText = document.getElementById('langText');
+            
+            currentLang = lang;
+            localStorage.setItem('studio_horror_lang', lang);
+
+            if (lang === 'en') {
+                htmlRoot.setAttribute('lang', 'en');
+                htmlRoot.setAttribute('dir', 'ltr');
+                if (langText) langText.textContent = 'العربية';
+            } else {
+                htmlRoot.setAttribute('lang', 'ar');
+                htmlRoot.setAttribute('dir', 'rtl');
+                if (langText) langText.textContent = 'English';
+            }
+
+            document.querySelectorAll('[data-ar]').forEach(el => {
+                const attrVal = el.getAttribute(`data-${lang}`);
+                if (attrVal) {
+                    el.textContent = attrVal;
+                }
+            });
+        }
+
+        function toggleLanguage() {
+            applyLanguage(currentLang === 'ar' ? 'en' : 'ar');
+        }
+
+        /* --- B. Audio Ambient Controller --- */
+        let isAudioPlaying = false;
+
+        function toggleAudio() {
+            const audio = document.getElementById('horrorAmbientAudio');
+            const btn = document.getElementById('soundToggleBtn');
+            const icon = document.getElementById('soundIcon');
+
+            if (!audio) return;
+
+            if (isAudioPlaying) {
+                audio.pause();
+                isAudioPlaying = false;
+                btn.classList.remove('active');
+                icon.className = 'fa-solid fa-volume-xmark';
+            } else {
+                audio.play().then(() => {
+                    isAudioPlaying = true;
+                    btn.classList.add('active');
+                    icon.className = 'fa-solid fa-volume-high';
+                }).catch(err => {
+                    console.log('Audio autoplay prevented by browser');
+                });
+            }
+        }
+
+        /* --- C. Canvas Fog & Particles Engine --- */
+        const canvas = document.getElementById('particlesCanvas');
+        const ctx = canvas.getContext('2d');
+
+        let particlesArray = [];
+        const numberOfParticles = 65;
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        class Particle {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.size = Math.random() * 3 + 1;
+                this.speedX = Math.random() * 0.8 - 0.4;
+                this.speedY = Math.random() * 0.9 + 0.3; // Falling down like ashes/blood
+                this.opacity = Math.random() * 0.6 + 0.2;
+                this.color = Math.random() > 0.4 ? 'rgba(255, 0, 0, ' : 'rgba(120, 0, 0, ';
+            }
+
+            update() {
+                this.y += this.speedY;
+                this.x += this.speedX;
+
+                if (this.y > canvas.height) {
+                    this.y = -10;
+                    this.x = Math.random() * canvas.width;
+                }
+            }
+
+            draw() {
+                ctx.fillStyle = this.color + this.opacity + ')';
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        function initParticles() {
+            particlesArray = [];
+            for (let i = 0; i < numberOfParticles; i++) {
+                particlesArray.push(new Particle());
+            }
+        }
+
+        function animateParticles() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            for (let i = 0; i < particlesArray.length; i++) {
+                particlesArray[i].update();
+                particlesArray[i].draw();
+            }
+            requestAnimationFrame(animateParticles);
+        }
+
+        /* --- D. DOM Initialization --- */
+        document.addEventListener('DOMContentLoaded', () => {
+            applyLanguage(currentLang);
+            initParticles();
+            animateParticles();
+        });
+    </script>
+</body>
+</html>
+<a href="https://discord.gg/lnb" target="_blank" class="btn-main btn-discord">
+    <i class="fa-brands fa-discord"></i>
+    <span data-ar="سيرفر الديسكورد" data-en="Discord Server">سيرفر الديسكورد</span>
+</a>
+<li><a href="https://discord.gg/lnb" target="_blank" data-ar="انضم لسيرفر الديسكورد" data-en="Join Discord">انضم لسيرفر الديسكورد</a></li>
